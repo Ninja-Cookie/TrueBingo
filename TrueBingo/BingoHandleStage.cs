@@ -194,7 +194,7 @@ namespace TrueBingo
                     break;
 
                     case Stage.osaka:
-                        objectsToDisable    = progressablesObjects.Where(x => OsakaAProgressable_Disable.Contains(x.name)).ToArray();
+                        objectsToDisable    = progressablesObjects.Where(x => OsakaAProgressable_Disable.Contains(x.name) || (!BingoConfig.enableBoss && OsakaBoss_Disable.Contains(x.name))).ToArray();
                         objectsToEnable     = progressablesObjects.Where(x => OsakaAProgressable_Enable.Contains(x.name)).ToArray();
                     break;
 

@@ -70,13 +70,17 @@
             "FrankGraffiti"
         };
 
-        public static readonly string[] OsakaAProgressable_Disable = new string[5]
+        public static readonly string[] OsakaAProgressable_Disable = new string[4]
         {
             "ProgressObject_StartTrigger",
             "LionStatueModelClosed",
-            "IntroSnakeBoss",
             "ProgressObject_Gate",
             "ProgressObjectGateArena"
+        };
+
+        public static readonly string[] OsakaBoss_Disable = new string[1]
+        {
+            "IntroSnakeBoss",
         };
 
         public readonly static string[] OsakaAProgressable_Enable = new string[1]

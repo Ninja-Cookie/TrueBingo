@@ -36,6 +36,7 @@ namespace TrueBingo
         private const   string      worldEntry_story        = "Disable Story";
         private const   string      worldEntry_bmx          = "Disable BMX Doors";
         private const   string      worldEntry_taxi         = "Enable Taxi Fight";
+        private const   string      worldEntry_boss         = "Enable Final Boss Trigger";
 
         private const BingoConfigTypes.Characters   characterEntry_char_default     = BingoConfigTypes.Characters.Red;
         private const BingoConfigTypes.Styles       characterEntry_style_default    = BingoConfigTypes.Styles.Skateboard;
@@ -46,6 +47,7 @@ namespace TrueBingo
         private const bool                          worldEntry_disableStory_default = false;
         private const bool                          worldEntry_disableBMX_default   = false;
         private const bool                          worldEntry_enableTaxi_default   = false;
+        private const bool                          worldEntry_enableBoss_default   = false;
 
         public static Reptile.Characters    character;
         public static MoveStyle             moveStyle;
@@ -56,6 +58,7 @@ namespace TrueBingo
         public static bool                  disableStory;
         public static bool                  disableBMX;
         public static bool                  enableTaxi;
+        public static bool                  enableBoss;
 
         public static void InitConfigs()
         {
@@ -87,6 +90,7 @@ namespace TrueBingo
             BindConfig(worldEntry,      worldEntry_story,       worldEntry_disableStory_default,"Disable Story Events such as Challenges.\nEnables Challenge Graffiti Pickups.");
             BindConfig(worldEntry,      worldEntry_bmx,         worldEntry_disableBMX_default);
             BindConfig(worldEntry,      worldEntry_taxi,        worldEntry_enableTaxi_default);
+            BindConfig(worldEntry,      worldEntry_boss,        worldEntry_enableBoss_default,  "Enables the Trigger which lets you enter the Final Boss area, located at the start of the final Mataan area after the vent.\nOnly has an effect if Story is also enabled.");
         }
 
         private struct ConfigEntry
@@ -128,6 +132,7 @@ namespace TrueBingo
             if (worldEntry.TryGetEntry(worldEntry_story,    out bool entry_story))      { disableStory  = entry_story; }
             if (worldEntry.TryGetEntry(worldEntry_bmx,      out bool entry_bmx))        { disableBMX    = entry_bmx; }
             if (worldEntry.TryGetEntry(worldEntry_taxi,     out bool entry_taxi))       { enableTaxi    = entry_taxi; }
+            if (worldEntry.TryGetEntry(worldEntry_boss,     out bool entry_boss))       { enableBoss    = entry_boss; }
         }
 
         private static bool TryGetEntry<T>(this ConfigEntry configEntry, string key, out T entryValue)
