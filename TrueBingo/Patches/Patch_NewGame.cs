@@ -42,17 +42,6 @@ namespace TrueBingo.Patches
         [HarmonyPatch(typeof(BaseModule), "HandleStageFullyLoaded")]
         public static class BaseModule_HandleStageFullyLoaded_Patch
         {
-            public static void Prefix()
-            {
-                SaveManager saveManager = Core.Instance?.SaveManager;
-
-                if (saveManager?.CurrentSaveSlot != null)
-                {
-                    saveManager.CurrentSaveSlot.maxWantedStars = 0;
-                    WantedManager.instance?.SetDebugStarAmount(0);
-                }
-            }
-
             public static void Postfix()
             {
                 SaveManager saveManager = Core.Instance?.SaveManager;

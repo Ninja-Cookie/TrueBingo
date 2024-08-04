@@ -9,7 +9,7 @@ namespace TrueBingo
     {
         public const string pluginGuid      = "ninjacookie.brc.truebingo";
         public const string pluginName      = "TrueBingo";
-        public const string pluginVersion   = "0.1.0";
+        public const string pluginVersion   = "0.1.1";
 
         private void Awake()
         {
@@ -20,6 +20,7 @@ namespace TrueBingo
 
             StageManager.OnStageInitialized += BingoHandleStage.UpdateStage;
             Core.OnUpdate += BingoHandleStage.UpdateObjective;
+            Core.OnUpdate += BingoHandleStage.UpdateWanted;
         }
     }
 }

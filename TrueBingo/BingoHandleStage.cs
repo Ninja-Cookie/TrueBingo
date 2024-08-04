@@ -158,6 +158,12 @@ namespace TrueBingo
             }
         }
 
+        public static void UpdateWanted()
+        {
+            if (BingoConfig.disableCops)
+                WantedManager.instance?.StopPlayerWantedStatus(false);
+        }
+
         public static void UpdateStageProgress()
         {
             Stage stage = Utility.GetCurrentStage();
