@@ -11,7 +11,7 @@ namespace TrueBingo
         public const string pluginName      = "TrueBingo";
         public const string pluginVersion   = "0.1.2";
 
-        private void Awake()
+        public void Awake()
         {
             var harmony = new Harmony(pluginGuid);
             harmony.PatchAll();
