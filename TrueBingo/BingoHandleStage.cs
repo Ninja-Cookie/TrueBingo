@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using static TrueBingo.BingoStageItems;
 
 namespace TrueBingo
@@ -197,6 +198,14 @@ namespace TrueBingo
                             objectsToDisable = progressablesObjects.Where(x => SquareAProgressable_Disable.Contains(x.name)).ToArray();
 
                         objectsToEnable = progressablesObjects.Where(x => SquareAProgressable_Enable.Contains(x.name)).ToArray();
+
+                        if (objectsToEnable.Length > 0)
+                        {
+                            AProgressable frankGraffiti = objectsToEnable.FirstOrDefault(x => x.name == SquareAProgressable_Enable[0]);
+
+                            if (frankGraffiti != default)
+                                (frankGraffiti as GraffitiSpot).OnFinish = new UnityEvent();
+                        }
                     break;
 
                     case Stage.osaka:

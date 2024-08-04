@@ -10,11 +10,7 @@ namespace TrueBingo.Patches
         {
             public static bool Prefix(SceneObjectsRegister ___sceneObjectsRegister)
             {
-                foreach (NPC npc in ___sceneObjectsRegister.NPCs)
-                {
-                    npc.InvokeMethod("SetAvailable", true);
-                }
-
+                EnableNPCs(___sceneObjectsRegister);
                 return false;
             }
         }
@@ -24,11 +20,7 @@ namespace TrueBingo.Patches
         {
             public static bool Prefix(SceneObjectsRegister ___sceneObjectsRegister)
             {
-                foreach (NPC npc in ___sceneObjectsRegister.NPCs)
-                {
-                    npc.InvokeMethod("SetAvailable", true);
-                }
-
+                EnableNPCs(___sceneObjectsRegister);
                 return false;
             }
         }
@@ -38,12 +30,16 @@ namespace TrueBingo.Patches
         {
             public static bool Prefix(SceneObjectsRegister ___sceneObjectsRegister)
             {
-                foreach (NPC npc in ___sceneObjectsRegister.NPCs)
-                {
-                    npc.InvokeMethod("SetAvailable", true);
-                }
-
+                EnableNPCs(___sceneObjectsRegister);
                 return false;
+            }
+        }
+
+        public static void EnableNPCs(SceneObjectsRegister sceneObjectsRegister)
+        {
+            foreach (NPC npc in sceneObjectsRegister.NPCs)
+            {
+                npc.InvokeMethod("SetAvailable", true);
             }
         }
     }
