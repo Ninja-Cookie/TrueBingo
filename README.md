@@ -1,5 +1,5 @@
 ## TrueBingo
-TrueBingo opens up the Bomb Rush Cyberfunk world, allowing you to go anywhere or do anything in any order you want, designed around use for Bingo related gameplay.
+TrueBingo opens up the Bomb Rush Cyberfunk world, allowing you to go anywhere or do anything in any order you want from an existing file or "New Game", designed around use for Bingo gameplay.
 
 When creating a "New Game", by default, this will place you in "Hideout" with everything avaliable to you, and all the exits accessible. From here, you can go anywhere and do anything, depending on the config you have set up.
 
