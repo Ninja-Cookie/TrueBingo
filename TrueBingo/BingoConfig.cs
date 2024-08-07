@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using Reptile;
-using System;
 using System.IO;
 using UnityEngine;
 using static TrueBingo.BingoConfigTypes;
@@ -13,43 +12,45 @@ namespace TrueBingo
         private static ConfigFile config_char;
         private static ConfigFile config_world;
 
-        private static  string  config_char_path_full;
-        private static  string  config_world_path_full;
+        private static string config_char_path_full;
+        private static string config_world_path_full;
 
-        private const   string  config_foldername           = "TrueBingo";
-        private const   string  config_char_filename        = "Character";
-        private const   string  config_world_filename       = "World";
-        private const   string  config_filetype             = "cfg";
+        // Files
+        // -----------------------------------
+        private const   string              config_foldername       = "TrueBingo";
+        private const   string              config_char_filename    = "Character";
+        private const   string              config_world_filename   = "World";
+        private const   string              config_filetype         = "cfg";
+        // -----------------------------------
 
-        private const   string  config_selection_char       = "Character Settings";
-        private const   string  config_selection_world      = "World Settings";
+        // Selections
+        // -----------------------------------
+        private const   string              config_selection_char   = "Character Settings";
+        private const   string              config_selection_world  = "World Settings";
+        // -----------------------------------
 
-        private static  ConfigEntry characterEntry;
-        private const   string      characterEntry_char     = "Character";
-        private const   string      characterEntry_style    = "Style";
-        private const   string      characterEntry_outfit   = "Outfit";
+        // Character Entry
+        // -----------------------------------
+        private static  ConfigEntry         characterEntry;
+        private const   string              characterEntry_char     = "Character";
+        private const   string              characterEntry_style    = "Style";
+        private const   string              characterEntry_outfit   = "Outfit";
+        // -----------------------------------
 
-        private static  ConfigEntry worldEntry;
-        private const   string      worldEntry_stage        = "Starting Stage";
-        private const   string      worldEntry_pos          = "Starting Position";
-        private const   string      worldEntry_seed         = "Seed";
-        private const   string      worldEntry_story        = "Disable Story";
-        private const   string      worldEntry_bmx          = "Disable BMX Doors";
-        private const   string      worldEntry_taxi         = "Enable Taxi Fight";
-        private const   string      worldEntry_boss         = "Enable Final Boss Trigger";
-        private const   string      worldEntry_cops         = "Disable Cops";
-
-        private const BingoConfigTypes.Characters   characterEntry_char_default     = BingoConfigTypes.Characters.Red;
-        private const BingoConfigTypes.Styles       characterEntry_style_default    = BingoConfigTypes.Styles.Skateboard;
-        private const BingoConfigTypes.Outfits      characterEntry_outfit_default   = BingoConfigTypes.Outfits.Spring;
-        private const BingoConfigTypes.Stages       worldEntry_stage_default        = BingoConfigTypes.Stages.Hideout;
-        private const int                           worldEntry_seed_default         = 0;
-        private static readonly Vector3             worldEntry_pos_default          = new Vector3(-5, 3, 43);
-        private const bool                          worldEntry_disableStory_default = false;
-        private const bool                          worldEntry_disableBMX_default   = false;
-        private const bool                          worldEntry_enableTaxi_default   = false;
-        private const bool                          worldEntry_enableBoss_default   = false;
-        private const bool                          worldEntry_disableCops_default  = true;
+        // World Entry
+        // -----------------------------------
+        private static  ConfigEntry         worldEntry;
+        private const   string              worldEntry_stage        = "Starting Stage";
+        private const   string              worldEntry_pos          = "Starting Position";
+        private const   string              worldEntry_seed         = "Seed";
+        private const   string              worldEntry_story        = "Disable Story";
+        private const   string              worldEntry_bmx          = "Disable BMX Doors";
+        private const   string              worldEntry_taxi         = "Enable Taxi Fight";
+        private const   string              worldEntry_boss         = "Enable Final Boss Trigger";
+        private const   string              worldEntry_cops         = "Disable Cops";
+        private const   string              worldEntry_cutscene     = "Allow Skipping All Cutscenes";
+        private const   string              worldEntry_fastcutscene = "Fast Cutscene Skip";
+        // -----------------------------------
 
         public static Reptile.Characters    character;
         public static MoveStyle             moveStyle;
@@ -62,16 +63,22 @@ namespace TrueBingo
         public static bool                  enableTaxi;
         public static bool                  enableBoss;
         public static bool                  disableCops;
+        public static bool                  cutsceneSkip;
+        public static bool                  fastCutscene;
 
         public static void InitConfigs()
+        {
+            CreateConfig();
+            FillConfigs();
+        }
+
+        private static void CreateConfig()
         {
             config_char_path_full = GetFilePath(config_foldername, config_char_filename, config_filetype);
             config_char = new ConfigFile(config_char_path_full, true);
 
             config_world_path_full = GetFilePath(config_foldername, config_world_filename, config_filetype);
             config_world = new ConfigFile(config_world_path_full, true);
-
-            FillConfigs();
         }
 
         private static string GetFilePath(string foldername, string filename, string filetype)
@@ -82,19 +89,34 @@ namespace TrueBingo
         private static void FillConfigs()
         {
             characterEntry = new ConfigEntry(config_char, config_selection_char);
-            BindConfig(characterEntry,  characterEntry_char,    characterEntry_char_default);
-            BindConfig(characterEntry,  characterEntry_style,   characterEntry_style_default);
-            BindConfig(characterEntry,  characterEntry_outfit,  characterEntry_outfit_default);
+            BindConfig(characterEntry,  characterEntry_char,    BingoConfigTypes.Characters.Red);
+            BindConfig(characterEntry,  characterEntry_style,   BingoConfigTypes.Styles.Skateboard);
+            BindConfig(characterEntry,  characterEntry_outfit,  BingoConfigTypes.Outfits.Spring);
 
             worldEntry = new ConfigEntry(config_world, config_selection_world);
-            BindConfig(worldEntry,      worldEntry_stage,       worldEntry_stage_default);
-            BindConfig(worldEntry,      worldEntry_pos,         worldEntry_pos_default,         "If Zero'd, uses random Stage spawn, otherwise spawns player at this position.\nDefault is relative to Hideout.\nWarning: Random can place you in closed OldHead areas.");
-            BindConfig(worldEntry,      worldEntry_seed,        worldEntry_seed_default,        "If Stage Random, and/or Spawn Random, uses this seed.\n0 = Fully Random Each Time");
-            BindConfig(worldEntry,      worldEntry_story,       worldEntry_disableStory_default,"Disable Story Events such as Challenges.\nEnables Challenge Graffiti Pickups.");
-            BindConfig(worldEntry,      worldEntry_bmx,         worldEntry_disableBMX_default);
-            BindConfig(worldEntry,      worldEntry_taxi,        worldEntry_enableTaxi_default);
-            BindConfig(worldEntry,      worldEntry_boss,        worldEntry_enableBoss_default,  "Enables the Trigger which lets you enter the Final Boss area, located at the start of the final Mataan area after the vent.\nOnly has an effect if Story is also enabled.");
-            BindConfig(worldEntry,      worldEntry_cops,        worldEntry_disableCops_default);
+            BindConfig(worldEntry,      worldEntry_stage,       BingoConfigTypes.Stages.Hideout);
+            BindConfig(worldEntry,      worldEntry_pos,         new Vector3(-5, 3, 43),
+                "If Zero'd, uses random Stage spawn, otherwise spawns player at this position.\n" +
+                "Default is relative to Hideout.\n" +
+                "Warning: Random can place you in closed OldHead areas."
+            );
+            BindConfig(worldEntry,      worldEntry_seed,        0,
+                "If Stage Random, and/or Spawn Random, uses this seed.\n" +
+                "0 = Fully Random Each Time"
+            );
+            BindConfig(worldEntry,      worldEntry_story,       false,
+                "Disable Story Events such as Challenges.\n" +
+                "Enables Challenge Graffiti Pickups."
+            );
+            BindConfig(worldEntry,      worldEntry_bmx,         false);
+            BindConfig(worldEntry,      worldEntry_taxi,        true);
+            BindConfig(worldEntry,      worldEntry_boss,        false,
+                "Enables the Trigger which lets you enter the Final Boss area, located at the start of the final Mataan area after the vent.\n" +
+                "Only has an effect if Story is also enabled."
+            );
+            BindConfig(worldEntry,      worldEntry_cops,        true);
+            BindConfig(worldEntry,      worldEntry_cutscene,    true);
+            BindConfig(worldEntry,      worldEntry_fastcutscene,true);
         }
 
         private struct ConfigEntry
@@ -116,28 +138,50 @@ namespace TrueBingo
 
         public static void HandleConfig()
         {
+            InitConfigs();
             ReloadConfigs();
+        }
 
-            // Char Entry
+        private static void ReloadConfigs()
+        {
+            config_char .Reload();
+            config_world.Reload();
+
+            UpdateConfigAll();
+        }
+
+        private static void UpdateConfigAll()
+        {
+            // Char
             if (characterEntry.TryGetEntry(characterEntry_char,     out BingoConfigTypes.Characters entry_char))    { character = GetCharacter(entry_char); }
-            if (characterEntry.TryGetEntry(characterEntry_style,    out Styles entry_style))                        { moveStyle = GetStyle(entry_style); }
-            if (characterEntry.TryGetEntry(characterEntry_outfit,   out Outfits entry_outfit))                      { outfit = GetOutfit(entry_outfit); }
+            if (characterEntry.TryGetEntry(characterEntry_style,    out Styles                      entry_style))   { moveStyle = GetStyle(entry_style); }
+            if (characterEntry.TryGetEntry(characterEntry_outfit,   out Outfits                     entry_outfit))  { outfit    = GetOutfit(entry_outfit); }
 
-            // World Entry
-            if (worldEntry.TryGetEntry(worldEntry_seed,             out int entry_seed))                            { seed = entry_seed; }
-            if (worldEntry.TryGetEntry(worldEntry_stage,            out Stages entry_stage))
+            // World
+            characterEntry.UpdateConfig(worldEntry_seed, ref seed);
+
+            if (worldEntry.TryGetEntry(worldEntry_stage, out Stages entry_stage))
             {
                 Stages stageToGet = entry_stage;
                 System.Random random = seed == 0 ? new System.Random() : new System.Random(seed);
 
                 stage = GetStage(stageToGet == Stages.Random ? (Stages)random.Next((int)Stages.Random) : stageToGet);
             }
-            if (worldEntry.TryGetEntry(worldEntry_pos,      out Vector3 entry_pos))     { position      = entry_pos; }
-            if (worldEntry.TryGetEntry(worldEntry_story,    out bool entry_story))      { disableStory  = entry_story; }
-            if (worldEntry.TryGetEntry(worldEntry_bmx,      out bool entry_bmx))        { disableBMX    = entry_bmx; }
-            if (worldEntry.TryGetEntry(worldEntry_taxi,     out bool entry_taxi))       { enableTaxi    = entry_taxi; }
-            if (worldEntry.TryGetEntry(worldEntry_boss,     out bool entry_boss))       { enableBoss    = entry_boss; }
-            if (worldEntry.TryGetEntry(worldEntry_cops,     out bool entry_cops))       { disableCops   = entry_cops; }
+
+            worldEntry.UpdateConfig(worldEntry_pos,     ref position);
+            worldEntry.UpdateConfig(worldEntry_story,   ref disableStory);
+            worldEntry.UpdateConfig(worldEntry_bmx,     ref disableBMX);
+            worldEntry.UpdateConfig(worldEntry_taxi,    ref enableTaxi);
+            worldEntry.UpdateConfig(worldEntry_boss,    ref enableBoss);
+            worldEntry.UpdateConfig(worldEntry_cops,    ref disableCops);
+            worldEntry.UpdateConfig(worldEntry_cutscene,ref cutsceneSkip);
+            worldEntry.UpdateConfig(worldEntry_fastcutscene,ref fastCutscene);
+        }
+
+        private static void UpdateConfig<T>(this ConfigEntry configEntry, string entry, ref T option)
+        {
+            if (configEntry.TryGetEntry(entry, out T entry_value))
+                option = entry_value;
         }
 
         private static bool TryGetEntry<T>(this ConfigEntry configEntry, string key, out T entryValue)
@@ -149,12 +193,6 @@ namespace TrueBingo
             }
             entryValue = default;
             return false;
-        }
-
-        private static void ReloadConfigs()
-        {
-            config_char .Reload();
-            config_world.Reload();
         }
     }
 }

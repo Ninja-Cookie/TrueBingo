@@ -49,11 +49,6 @@ namespace TrueBingo
             return default;
         }
 
-        public static Type GetNestType(this object input, string name)
-        {
-            return input.GetType().GetNestedType(name, flags);
-        }
-
         private static bool GetMember(this object input, string name, out MemberInfo member)
         {
             MemberInfo[] members = input.GetType().GetMember(name, flags);
