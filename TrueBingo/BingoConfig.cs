@@ -48,6 +48,7 @@ namespace TrueBingo
         private const   string              worldEntry_taxi         = "Enable Taxi Fight";
         private const   string              worldEntry_boss         = "Enable Final Boss Trigger";
         private const   string              worldEntry_cops         = "Disable Cops";
+        private const   string              worldEntry_roboskip     = "Open Teleport Robo-Posts";
         private const   string              worldEntry_cutscene     = "Allow Skipping All Cutscenes";
         private const   string              worldEntry_fastcutscene = "Fast Cutscene Skip";
         // -----------------------------------
@@ -63,6 +64,7 @@ namespace TrueBingo
         public static bool                  enableTaxi;
         public static bool                  enableBoss;
         public static bool                  disableCops;
+        public static bool                  roboSkip;
         public static bool                  cutsceneSkip;
         public static bool                  fastCutscene;
 
@@ -115,6 +117,7 @@ namespace TrueBingo
                 "Only has an effect if Story is also enabled."
             );
             BindConfig(worldEntry,      worldEntry_cops,        true);
+            BindConfig(worldEntry,      worldEntry_roboskip,    true);
             BindConfig(worldEntry,      worldEntry_cutscene,    true);
             BindConfig(worldEntry,      worldEntry_fastcutscene,true);
         }
@@ -174,6 +177,7 @@ namespace TrueBingo
             worldEntry.UpdateConfig(worldEntry_taxi,    ref enableTaxi);
             worldEntry.UpdateConfig(worldEntry_boss,    ref enableBoss);
             worldEntry.UpdateConfig(worldEntry_cops,    ref disableCops);
+            worldEntry.UpdateConfig(worldEntry_roboskip,ref roboSkip);
             worldEntry.UpdateConfig(worldEntry_cutscene,ref cutsceneSkip);
             worldEntry.UpdateConfig(worldEntry_fastcutscene,ref fastCutscene);
         }

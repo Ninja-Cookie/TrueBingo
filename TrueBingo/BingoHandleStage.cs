@@ -130,6 +130,9 @@ namespace TrueBingo
 
             if (BingoConfig.disableBMX)
                 DisableBMXDoors();
+
+            if (BingoConfig.roboSkip)
+                UnlockRoboDoors();
         }
 
         private static void DisableBMXDoors()
@@ -240,6 +243,40 @@ namespace TrueBingo
 
                 foreach (var objectToEnable in objectsToEnable)
                     objectToEnable.gameObject.SetActive(true);
+            }
+        }
+
+        public static void UnlockRoboDoors()
+        {
+            Stage stage = Utility.GetCurrentStage();
+
+            if (stage == Stage.pyramid || stage == Stage.Mall || stage == Stage.osaka)
+            {
+                ComboMascotSystem[] mascots = Object.FindObjectsOfType<ComboMascotSystem>().ToArray();
+
+                if (((stage == Stage.pyramid || stage == Stage.Mall) && mascots.Length > 1) || (stage == Stage.osaka && mascots.Length > 0))
+                {
+                    ComboMascotSystem mascot = null;
+
+                    switch (stage)
+                    {
+                        case Stage.pyramid:
+                        case Stage.Mall:
+                            mascot = mascots[1];
+                            break;
+
+                        case Stage.osaka:
+                            mascot = mascots[0];
+                            break;
+                    }
+
+                    if (mascot != null)
+                    {
+                        mascot.door1.MakeUnactive();
+                        mascot.door2.MakeUnactive();
+                        mascot.TurnOffMascots();
+                    }
+                }
             }
         }
     }
