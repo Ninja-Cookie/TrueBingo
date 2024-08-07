@@ -17,5 +17,6 @@ Config files to edit the character, style, and outfit you start as, as well as W
 - Toggle to Enable Taxi Fight in Square.
 - Toggle to Enable Final Boss Trigger.
 - Toggle to Disable Cops.
+- Toggle to Enable Teleport Robo-Posts.
 - Toggle to Enable Cutscene Skip.
 - Toggle to Enable Fast Cutscenes.
