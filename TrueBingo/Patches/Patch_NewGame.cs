@@ -49,7 +49,7 @@ namespace TrueBingo.Patches
                 WorldHandler worldHandler = WorldHandler.instance;
                 Player player = worldHandler?.GetCurrentPlayer();
 
-                if (saveManager?.CurrentSaveSlot != null)
+                if (player != null && saveManager?.CurrentSaveSlot != null)
                 {
                     Stage currentStage = Utility.GetCurrentStage();
 
@@ -58,7 +58,7 @@ namespace TrueBingo.Patches
                     saveManager.SaveCurrentSaveSlotImmediate();
                 }
 
-                BingoHandleStage.UpdateStageProgress();
+                BingoHandleStage.UpdateStageProgress(worldHandler?.SceneObjectsRegister, Utility.GetCurrentStage());
             }
         }
 

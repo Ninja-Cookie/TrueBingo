@@ -35,6 +35,16 @@ namespace TrueBingo.Patches
             }
         }
 
+        [HarmonyPatch(typeof(WorldHandler), "CharacterIsAlreadyNPCInScene")]
+        public static class WorldHandler_CharacterIsAlreadyNPCInScene_Patch
+        {
+            public static bool Prefix(ref bool __result)
+            {
+                __result = false;
+                return false;
+            }
+        }
+
         public static void EnableNPCs(SceneObjectsRegister sceneObjectsRegister)
         {
             foreach (NPC npc in sceneObjectsRegister.NPCs)

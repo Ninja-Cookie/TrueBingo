@@ -9,82 +9,124 @@ namespace TrueBingo
 {
     public static class BingoHandleStage
     {
-        public static bool HasLeftRespawn = false;
-        public static Vector3 spawnPosition = Vector3.zero;
+        public static bool      HasLeftRespawn  = false;
+        public static Vector3   spawnPosition   = Vector3.zero;
 
         public static void UpdateStage()
         {
+            Stage                   stage                   = Utility.GetCurrentStage();
+            SceneObjectsRegister    sceneObjectsRegister    = WorldHandler.instance?.SceneObjectsRegister;
+            WorldHandler            worldHandler            = WorldHandler.instance;
+            Player                  player                  = worldHandler?.GetCurrentPlayer();
+
             BingoConfig.HandleConfig();
 
             UpdateObjective();
 
+            UpdatePlayer(player);
+
             if (Patches.Patch_NewGame.newGame)
+                HandleNewGame(worldHandler, player);
+
+            UpdateProgress(sceneObjectsRegister, stage);
+            UpdateStageProgress(sceneObjectsRegister, stage);
+
+            if (BingoConfig.disableBMX)
+                DisableBMXDoors();
+
+            if (BingoConfig.roboSkip)
+                UnlockRoboDoors();
+        }
+
+        private static void UpdatePlayer(Player player)
+        {
+            SaveSlotData saveSlot = Core.Instance?.SaveManager?.CurrentSaveSlot;
+
+            if (saveSlot != null)
             {
-                Patches.Patch_NewGame.newGame = false;
+                saveSlot.taxiLocked = false;
 
-                WorldHandler worldHandler = WorldHandler.instance;
-                Player player = worldHandler?.GetCurrentPlayer();
+                bool updateBoostpack =
+                    player.GetValue<AirDashAbility>     ("airDashAbility")      .locked ||
+                    player.GetValue<SlideAbility>       ("slideAbility")        .locked ||
+                    player.GetValue<SpecialAirAbility>  ("specialAirAbility")   .locked ||
+                    player.GetValue<LedgeClimbAbility>  ("ledgeClimbAbility")   .locked ||
+                    player.GetValue<BoostAbility>       ("boostAbility")        .locked ||
+                    saveSlot.boostAbilityLocked                                         ||
+                    saveSlot.boostpackLocked;
 
-                if (player != null)
-                {
-                    SaveManager saveManager = Core.Instance?.SaveManager;
-
-                    // Init Character
-                    player.SetCharacter(BingoConfig.character);
-                    player.InitVisual();
-
-                    // Handle Movestyle
-                    player.SetCurrentMoveStyleEquipped(BingoConfig.moveStyle);
-                    player.InitAbilities();
-                    player.GetValue<CharacterVisual>("characterVisual").SetMoveStyleVisualProps(player, BingoConfig.moveStyle);
-                    player.SwitchToEquippedMovestyle(false, showEffect: false);
-
-                    if (saveManager?.CurrentSaveSlot != null)
-                        saveManager.CurrentSaveSlot.GetCharacterProgress(BingoConfig.character).moveStyle = BingoConfig.moveStyle;
-
-                    // Handle Outfit
-                    player.SetOutfit(BingoConfig.outfit);
-
-                    // Handle Story Setup
-                    saveManager?.CurrentSaveSlot?.SetupStoryCharactersLocked();
-                    player.LockFortuneApp(true);
-
-                    for (int i = 0; i < (int)Dances.MAX; i++)
-                        saveManager?.CurrentSaveSlot?.UnlockDance(i);
-
-                    // Handle Player Spawn
-                    spawnPosition = BingoConfig.position;
-                    Quaternion spawnRotation = player.transform.rotation;
-
-                    if (spawnPosition == Vector3.zero)
-                    {
-                        List<PlayerSpawner> playerSpawners = worldHandler.SceneObjectsRegister?.playerSpawners;
-                        System.Random random = BingoConfig.seed == 0 ? new System.Random() : new System.Random(BingoConfig.seed);
-
-                        if (playerSpawners.Count > 0)
-                        {
-                            PlayerSpawner spawner = playerSpawners[random.Next(playerSpawners.Count)];
-                            spawnPosition = spawner.transform.position;
-                            spawnRotation = spawner.transform.rotation;
-                        }
-                    }
-
-                    worldHandler.PlaceCurrentPlayerAt(spawnPosition, spawnRotation);
-
-                    HasLeftRespawn = false;
-
-                    // Save
-                    saveManager.SaveCurrentSaveSlot();
-                }
+                if (updateBoostpack)                            player.LockBoostpack                (false);
+                if (saveSlot.cameraAppLocked)                   player.LockCameraApp                (false);
+                if (saveSlot.characterSelectLocked)             player.LockCharacterSelect          (false);
+                if (saveSlot.phoneLocked)                       player.LockPhone                    (false);
+                if (saveSlot.spraycanLocked)                    player.LockSpraycan                 (false);
+                if (saveSlot.switchToEquippedMovestyleLocked)   player.LockSwitchToEquippedMoveStyle(false);
+                if (!saveSlot.fortuneAppLocked)                 player.LockFortuneApp               (true);
             }
+        }
 
-            Stage stage = Utility.GetCurrentStage();
-            SceneObjectsRegister sceneObjectsRegister = WorldHandler.instance?.SceneObjectsRegister;
+        private static void HandleNewGame(WorldHandler worldHandler, Player player)
+        {
+            Patches.Patch_NewGame.newGame = false;
 
-            List<ProgressObject> progressObjects = sceneObjectsRegister?.progressObjects;
+            if (player != null)
+            {
+                SaveManager saveManager = Core.Instance?.SaveManager;
 
+                // Init Character
+                player.SetCharacter(BingoConfig.character);
+                player.InitVisual();
+
+                // Handle Movestyle
+                player.SetCurrentMoveStyleEquipped(BingoConfig.moveStyle);
+                player.InitAbilities();
+                player.GetValue<CharacterVisual>("characterVisual").SetMoveStyleVisualProps(player, BingoConfig.moveStyle);
+                player.SwitchToEquippedMovestyle(false, showEffect: false);
+
+                if (saveManager?.CurrentSaveSlot != null)
+                    saveManager.CurrentSaveSlot.GetCharacterProgress(BingoConfig.character).moveStyle = BingoConfig.moveStyle;
+
+                // Handle Outfit
+                player.SetOutfit(BingoConfig.outfit);
+
+                // Handle Story Setup
+                saveManager?.CurrentSaveSlot?.SetupStoryCharactersLocked();
+
+                for (int i = 0; i < (int)Dances.MAX; i++)
+                    saveManager?.CurrentSaveSlot?.UnlockDance(i);
+
+                // Handle Player Spawn
+                spawnPosition = BingoConfig.position;
+                Quaternion spawnRotation = player.transform.rotation;
+
+                if (spawnPosition == Vector3.zero)
+                {
+                    List<PlayerSpawner> playerSpawners = worldHandler.SceneObjectsRegister?.playerSpawners;
+                    System.Random random = BingoConfig.seed == 0 ? new System.Random() : new System.Random(BingoConfig.seed);
+
+                    if (playerSpawners.Count > 0)
+                    {
+                        PlayerSpawner spawner = playerSpawners[random.Next(playerSpawners.Count)];
+                        spawnPosition = spawner.transform.position;
+                        spawnRotation = spawner.transform.rotation;
+                    }
+                }
+
+                worldHandler.PlaceCurrentPlayerAt(spawnPosition, spawnRotation);
+
+                HasLeftRespawn = false;
+
+                // Save
+                saveManager.SaveCurrentSaveSlot();
+            }
+        }
+
+        private static void UpdateProgress(SceneObjectsRegister sceneObjectsRegister, Stage stage)
+        {
             if (sceneObjectsRegister != null )
             {
+                List<ProgressObject> progressObjects = sceneObjectsRegister.progressObjects;
+
                 if (BingoConfig.disableStory)
                 {
                     foreach (var pickup in Resources.FindObjectsOfTypeAll<Collectable>().Where(x => x.GetValue<Pickup.PickUpType>("pickUpType") == Pickup.PickUpType.GRAFFITI_UNLOCKABLE))
@@ -125,14 +167,6 @@ namespace TrueBingo
                     }
                 }
             }
-
-            UpdateStageProgress();
-
-            if (BingoConfig.disableBMX)
-                DisableBMXDoors();
-
-            if (BingoConfig.roboSkip)
-                UnlockRoboDoors();
         }
 
         private static void DisableBMXDoors()
@@ -168,10 +202,8 @@ namespace TrueBingo
                 WantedManager.instance?.StopPlayerWantedStatus(false);
         }
 
-        public static void UpdateStageProgress()
+        public static void UpdateStageProgress(SceneObjectsRegister sceneObjectsRegister, Stage stage)
         {
-            Stage stage = Utility.GetCurrentStage();
-            SceneObjectsRegister sceneObjectsRegister = WorldHandler.instance?.SceneObjectsRegister;
             List<AProgressable> progressablesObjects = sceneObjectsRegister?.progressables;
 
             if (progressablesObjects != null)
