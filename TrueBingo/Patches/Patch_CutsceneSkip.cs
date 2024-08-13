@@ -9,7 +9,7 @@ namespace TrueBingo.Patches
         [HarmonyPatch(typeof(SequenceHandler), "UpdateSequenceHandler")]
         public static class UpdateSequenceHandler_Patch
         {
-            public static void Prefix(SequenceHandler __instance, PlayableDirector ___sequence, ref float ___skipFadeDuration, ref float ___skipStartTimer)
+            public static void Prefix(SequenceHandler __instance, Player ___player, PlayableDirector ___sequence, ref float ___skipFadeDuration, ref float ___skipStartTimer)
             {
                 if (BingoConfig.fastCutscene)
                 {
@@ -17,7 +17,7 @@ namespace TrueBingo.Patches
                     ___skipStartTimer = 1.5f;
                 }
 
-                if (BingoConfig.cutsceneSkip && ___sequence != null && !___sequence.ToString().Contains("ChangeOutfitSequence"))
+                if (BingoConfig.cutsceneSkip && ___player != null && ___player.IsBusyWithSequence() && ___sequence != null && !___sequence.ToString().Contains("ChangeOutfitSequence"))
                 {
                     if (__instance.GetValue<int>("skipTextActiveState") == 0)
                         __instance.SetValue<int>("skipTextActiveState", 1);

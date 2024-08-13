@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Reflection;
 using System.Linq;
-using System;
+using System.Collections.Generic;
 
 namespace TrueBingo
 {
@@ -49,13 +49,23 @@ namespace TrueBingo
             return default;
         }
 
+        private static List<MemberInfo> savedMembers = new List<MemberInfo>();
         private static bool GetMember(this object input, string name, out MemberInfo member)
         {
+            MemberInfo searchMember = savedMembers.Find(x => x.DeclaringType == input.GetType() && x.Name == name);
+
+            if (searchMember != null)
+            {
+                member = searchMember;
+                return true;
+            }
+
             MemberInfo[] members = input.GetType().GetMember(name, flags);
 
             if (members != null && members.Length > 0)
             {
                 member = members.First();
+                savedMembers.Add(member);
                 return true;
             }
             Debug.LogError($"No Member \"{name}\" Could Be Found...");
