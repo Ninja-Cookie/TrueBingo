@@ -9,7 +9,7 @@ namespace TrueBingo
     {
         public const string pluginGuid      = "ninjacookie.brc.truebingo";
         public const string pluginName      = "TrueBingo";
-        public const string pluginVersion   = "1.0.2";
+        public const string pluginVersion   = "1.0.3";
 
         public void Awake()
         {
