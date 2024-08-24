@@ -20,3 +20,4 @@ Config files to edit the character, style, and outfit you start as, as well as W
 - Toggle to Enable Teleport Robo-Posts.
 - Toggle to Enable Cutscene Skip.
 - Toggle to Enable Fast Cutscenes.
+- Toggle to Always Show Rep.
