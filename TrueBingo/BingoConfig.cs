@@ -51,6 +51,7 @@ namespace TrueBingo
         private const   string              worldEntry_roboskip     = "Open Teleport Robo-Posts";
         private const   string              worldEntry_cutscene     = "Allow Skipping All Cutscenes";
         private const   string              worldEntry_fastcutscene = "Fast Cutscene Skip";
+        private const   string              worldEntry_repdisplay   = "Always Display REP";
         // -----------------------------------
 
         public static Reptile.Characters    character;
@@ -67,6 +68,7 @@ namespace TrueBingo
         public static bool                  roboSkip;
         public static bool                  cutsceneSkip;
         public static bool                  fastCutscene;
+        public static bool                  repDisplay;
 
         public static void InitConfigs()
         {
@@ -120,6 +122,7 @@ namespace TrueBingo
             BindConfig(worldEntry,      worldEntry_roboskip,    true);
             BindConfig(worldEntry,      worldEntry_cutscene,    true);
             BindConfig(worldEntry,      worldEntry_fastcutscene,true);
+            BindConfig(worldEntry,      worldEntry_repdisplay,  true);
         }
 
         private struct ConfigEntry
@@ -171,15 +174,16 @@ namespace TrueBingo
                 stage = GetStage(stageToGet == Stages.Random ? (Stages)random.Next((int)Stages.Random) : stageToGet);
             }
 
-            worldEntry.UpdateConfig(worldEntry_pos,     ref position);
-            worldEntry.UpdateConfig(worldEntry_story,   ref disableStory);
-            worldEntry.UpdateConfig(worldEntry_bmx,     ref disableBMX);
-            worldEntry.UpdateConfig(worldEntry_taxi,    ref enableTaxi);
-            worldEntry.UpdateConfig(worldEntry_boss,    ref enableBoss);
-            worldEntry.UpdateConfig(worldEntry_cops,    ref disableCops);
-            worldEntry.UpdateConfig(worldEntry_roboskip,ref roboSkip);
-            worldEntry.UpdateConfig(worldEntry_cutscene,ref cutsceneSkip);
+            worldEntry.UpdateConfig(worldEntry_pos,         ref position);
+            worldEntry.UpdateConfig(worldEntry_story,       ref disableStory);
+            worldEntry.UpdateConfig(worldEntry_bmx,         ref disableBMX);
+            worldEntry.UpdateConfig(worldEntry_taxi,        ref enableTaxi);
+            worldEntry.UpdateConfig(worldEntry_boss,        ref enableBoss);
+            worldEntry.UpdateConfig(worldEntry_cops,        ref disableCops);
+            worldEntry.UpdateConfig(worldEntry_roboskip,    ref roboSkip);
+            worldEntry.UpdateConfig(worldEntry_cutscene,    ref cutsceneSkip);
             worldEntry.UpdateConfig(worldEntry_fastcutscene,ref fastCutscene);
+            worldEntry.UpdateConfig(worldEntry_repdisplay,  ref repDisplay);
         }
 
         private static void UpdateConfig<T>(this ConfigEntry configEntry, string entry, ref T option)

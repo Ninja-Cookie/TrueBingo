@@ -31,10 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BingoBoard\ObjectivesList.cs" />
     <Compile Include="BingoConfig.cs" />
     <Compile Include="BingoConfigTypes.cs" />
-    <Compile Include="BingoBoard\BingoGeneration.cs" />
     <Compile Include="BingoHandleStage.cs" />
     <Compile Include="BingoStageItems.cs" />
     <Compile Include="Components\Component_IreneTrigger.cs" />
@@ -44,6 +42,7 @@
     <Compile Include="Patches\Patch_LegalCrime.cs" />
     <Compile Include="Patches\Patch_NewGame.cs" />
     <Compile Include="Patches\Patch_NPCAvailability.cs" />
+    <Compile Include="Patches\Patch_RepLabel.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
