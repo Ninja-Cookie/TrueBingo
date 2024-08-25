@@ -52,6 +52,7 @@ namespace TrueBingo
         private const   string              worldEntry_cutscene     = "Allow Skipping All Cutscenes";
         private const   string              worldEntry_fastcutscene = "Fast Cutscene Skip";
         private const   string              worldEntry_repdisplay   = "Always Display REP";
+        private const   string              worldEntry_mallvinyl    = "Skip Mall Vinyl";
         // -----------------------------------
 
         public static Reptile.Characters    character;
@@ -69,6 +70,7 @@ namespace TrueBingo
         public static bool                  cutsceneSkip;
         public static bool                  fastCutscene;
         public static bool                  repDisplay;
+        public static bool                  skipMallVinyl;
 
         public static void InitConfigs()
         {
@@ -123,6 +125,7 @@ namespace TrueBingo
             BindConfig(worldEntry,      worldEntry_cutscene,    true);
             BindConfig(worldEntry,      worldEntry_fastcutscene,true);
             BindConfig(worldEntry,      worldEntry_repdisplay,  true);
+            BindConfig(worldEntry,      worldEntry_mallvinyl,   true);
         }
 
         private struct ConfigEntry
@@ -184,6 +187,7 @@ namespace TrueBingo
             worldEntry.UpdateConfig(worldEntry_cutscene,    ref cutsceneSkip);
             worldEntry.UpdateConfig(worldEntry_fastcutscene,ref fastCutscene);
             worldEntry.UpdateConfig(worldEntry_repdisplay,  ref repDisplay);
+            worldEntry.UpdateConfig(worldEntry_mallvinyl,   ref skipMallVinyl);
         }
 
         private static void UpdateConfig<T>(this ConfigEntry configEntry, string entry, ref T option)

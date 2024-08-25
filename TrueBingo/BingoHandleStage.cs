@@ -62,6 +62,17 @@ namespace TrueBingo
                 if (saveSlot.spraycanLocked)                    player.LockSpraycan                 (false);
                 if (saveSlot.switchToEquippedMovestyleLocked)   player.LockSwitchToEquippedMoveStyle(false);
                 if (!saveSlot.fortuneAppLocked)                 player.LockFortuneApp               (true);
+
+                UnlockVinylSolace(saveSlot);
+            }
+        }
+
+        private static void UnlockVinylSolace(SaveSlotData saveSlot)
+        {
+            if (saveSlot != null)
+            {
+                if (!saveSlot.GetCharacterProgress(Characters.girl1).unlocked) saveSlot.UnlockCharacter(Characters.girl1);
+                if (!saveSlot.GetCharacterProgress(Characters.dummy).unlocked) saveSlot.UnlockCharacter(Characters.dummy);
             }
         }
 
@@ -91,6 +102,7 @@ namespace TrueBingo
 
                 // Handle Story Setup
                 saveManager?.CurrentSaveSlot?.SetupStoryCharactersLocked();
+                UnlockVinylSolace(saveManager.CurrentSaveSlot);
 
                 for (int i = 0; i < (int)Dances.MAX; i++)
                     saveManager?.CurrentSaveSlot?.UnlockDance(i);
@@ -250,6 +262,7 @@ namespace TrueBingo
 
                     case Stage.Mall:
                         objectsToDisable    = progressablesObjects.Where(x => MallAProgressable_Disable.Contains(x.name)).ToArray();
+                        HandleMallVinyl();
                     break;
 
                     case Stage.pyramid:
@@ -275,6 +288,26 @@ namespace TrueBingo
 
                 foreach (var objectToEnable in objectsToEnable)
                     objectToEnable.gameObject.SetActive(true);
+            }
+        }
+
+        private static void HandleMallVinyl()
+        {
+            if (BingoConfig.skipMallVinyl)
+            {
+                BoxCollider[] disableVinyls = Resources.FindObjectsOfTypeAll<BoxCollider>().Where(x => x.name == "ProgressObject_TriggerIntro" || x.name == "NPC_Vinyl1").ToArray();
+
+                foreach (var vinyl in disableVinyls)
+                    vinyl.gameObject.SetActive(false);
+
+                NPC vinylMall = Resources.FindObjectsOfTypeAll<NPC>().FirstOrDefault(x => x.name == "NPC_Vinyl4");
+
+                if (vinylMall != null && vinylMall.GetValue<int>("dialogueLevel") < 1)
+                {
+                    vinylMall.InvokeMethod("SetNPCActive", true);
+                    vinylMall.InvokeMethod("SetAvailable", true);
+                    vinylMall.SetDialogueLevel(1);
+                }
             }
         }
 
