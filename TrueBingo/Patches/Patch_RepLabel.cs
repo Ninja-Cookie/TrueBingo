@@ -51,13 +51,14 @@ namespace TrueBingo.Patches
             {
                 if (BingoConfig.repDisplay)
                 {
-                    activeUI.Clear();
+                    if (activeUI.Count > 0)
+                        activeUI.Clear();
 
                     ___ui.gameplayScreen.gameObject.SetActive(true);
 
                     foreach (var uiElement in ___ui.gameplayScreen.GetAllChildren())
                     {
-                        if (!uiElement.name.ToLower().Contains("rep") && uiElement.gameObject.activeSelf)
+                        if (uiElement != null && !uiElement.name.ToLower().Contains("rep") && uiElement.gameObject.activeSelf)
                         {
                             activeUI.Add(uiElement);
                             uiElement.gameObject.SetActive(false);
@@ -72,11 +73,11 @@ namespace TrueBingo.Patches
         {
             public static void Prefix(GameplayUI ___ui)
             {
-                if (BingoConfig.repDisplay)
+                if (BingoConfig.repDisplay && activeUI != null && activeUI.Count > 0)
                 {
                     foreach (var comp in activeUI)
                     {
-                        comp.gameObject.SetActive(true);
+                        comp?.gameObject?.SetActive(true);
                     }
 
                     activeUI.Clear();

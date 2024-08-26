@@ -192,19 +192,14 @@ namespace TrueBingo
         public static void UpdateObjective()
         {
             Story.ObjectiveID newObjective = Story.ObjectiveID.HangOut;
+            SaveManager saveManager = Core.Instance?.SaveManager;
 
-            SaveSlotData saveSlotData = Core.Instance?.SaveManager?.CurrentSaveSlot;
-
-            if (saveSlotData != null && saveSlotData.CurrentStoryObjective != newObjective)
+            if (saveManager?.CurrentSaveSlot != null && saveManager.CurrentSaveSlot.CurrentStoryObjective != newObjective)
             {
-                saveSlotData.CurrentStoryObjective = newObjective;
-                Core.Instance.SaveManager.SaveCurrentSaveSlot();
+                saveManager.CurrentSaveSlot.CurrentStoryObjective = newObjective;
+                saveManager.SaveCurrentSaveSlot();
 
-                WorldHandler.instance?.StoryManager?.UpdateObjectives();
-                if (!(Mapcontroller.Instance == null))
-                {
-                    Mapcontroller.Instance.UpdateObjectivePins();
-                }
+                Mapcontroller.Instance?.UpdateObjectivePins();
             }
         }
 

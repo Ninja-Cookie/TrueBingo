@@ -33,7 +33,7 @@ namespace TrueBingo.Patches
             public static void Postfix(ActiveOnChapter __instance)
             {
                 if (Utility.GetCurrentStage() != Stage.hideout)
-                    __instance.gameObject.SetActive(!BingoConfig.disableStory || __instance.chapters.Contains(Chapter.CHAPTER_6));
+                    __instance.gameObject.SetActive((!BingoConfig.disableStory || __instance.chapters.Contains(Chapter.CHAPTER_6)) && __instance.name != "BeforeFinalBossElephants");
                 else
                     __instance.gameObject.SetActive(false);
             }
