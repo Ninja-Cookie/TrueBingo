@@ -42,6 +42,7 @@ namespace TrueBingo.Patches
             }
         }
 
+        /*
         public static List<Transform> activeUI = new List<Transform>();
 
         [HarmonyPatch(typeof(Player), "StartGraffitiMode")]
@@ -84,5 +85,6 @@ namespace TrueBingo.Patches
                 }
             }
         }
+        */
     }
 }
