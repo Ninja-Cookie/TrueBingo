@@ -1,6 +1,8 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using Reptile;
+using TrueBingo.BingoSync;
+using UnityEngine;
 
 namespace TrueBingo
 {
@@ -9,7 +11,9 @@ namespace TrueBingo
     {
         public const string pluginGuid      = "ninjacookie.brc.truebingo";
         public const string pluginName      = "TrueBingo";
-        public const string pluginVersion   = "1.0.3";
+        public const string pluginVersion   = "1.1.0";
+
+        public static GameObject BingoSyncGUI;
 
         public void Awake()
         {
@@ -21,6 +25,9 @@ namespace TrueBingo
             StageManager.OnStageInitialized += BingoHandleStage.UpdateStage;
             Core.OnUpdate += BingoHandleStage.UpdateObjective;
             Core.OnUpdate += BingoHandleStage.UpdateWanted;
+
+            BingoSyncGUI = new GameObject("BingoSyncGUI", typeof(BingoSyncGUI));
+            DontDestroyOnLoad(BingoSyncGUI);
         }
     }
 }

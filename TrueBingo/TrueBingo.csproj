@@ -35,14 +35,20 @@
     <Compile Include="BingoConfigTypes.cs" />
     <Compile Include="BingoHandleStage.cs" />
     <Compile Include="BingoStageItems.cs" />
+    <Compile Include="BingoSync\BingoSyncGUI.cs" />
+    <Compile Include="BingoSync\BingoSyncGUIConfig.cs" />
+    <Compile Include="BingoSync\BingoSyncHandler.cs" />
+    <Compile Include="BingoSync\BingoSyncSocket.cs" />
     <Compile Include="Components\Component_IreneTrigger.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Patches\Patch_CutsceneSkip.cs" />
+    <Compile Include="Patches\Patch_Inputs.cs" />
     <Compile Include="Patches\Patch_ItemDisplay.cs" />
     <Compile Include="Patches\Patch_LegalCrime.cs" />
     <Compile Include="Patches\Patch_NewGame.cs" />
     <Compile Include="Patches\Patch_NPCAvailability.cs" />
     <Compile Include="Patches\Patch_RepLabel.cs" />
+    <Compile Include="Patches\Patch_BingoSync.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

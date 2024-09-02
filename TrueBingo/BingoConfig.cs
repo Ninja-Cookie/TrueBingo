@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using Reptile;
 using System.IO;
+using TrueBingo.BingoSync;
 using UnityEngine;
 using static TrueBingo.BingoConfigTypes;
 
@@ -11,22 +12,26 @@ namespace TrueBingo
     {
         private static ConfigFile config_char;
         private static ConfigFile config_world;
+        public  static ConfigFile config_bingosync;
 
         private static string config_char_path_full;
         private static string config_world_path_full;
+        private static string config_bingosync_path_full;
 
         // Files
         // -----------------------------------
-        private const   string              config_foldername       = "TrueBingo";
-        private const   string              config_char_filename    = "Character";
-        private const   string              config_world_filename   = "World";
-        private const   string              config_filetype         = "cfg";
+        private const   string              config_foldername           = "TrueBingo";
+        private const   string              config_char_filename        = "Character";
+        private const   string              config_world_filename       = "World";
+        private const   string              config_bingosync_filename   = "BingoSync";
+        private const   string              config_filetype             = "cfg";
         // -----------------------------------
 
         // Selections
         // -----------------------------------
-        private const   string              config_selection_char   = "Character Settings";
-        private const   string              config_selection_world  = "World Settings";
+        private const   string              config_selection_char       = "Character Settings";
+        private const   string              config_selection_world      = "World Settings";
+        public  const   string              config_selection_bingosync  = "BingoSync";
         // -----------------------------------
 
         // Character Entry
@@ -55,6 +60,17 @@ namespace TrueBingo
         private const   string              worldEntry_mallvinyl    = "Skip Mall Vinyl";
         // -----------------------------------
 
+        // BingoSync Entry
+        // -----------------------------------
+        private static  ConfigEntry         bingoSyncEntry;
+        public  const   string              bingoSyncEntry_roomID       = "Room ID";
+        public  const   string              bingoSyncEntry_password     = "Room Password";
+        public  const   string              bingoSyncEntry_name         = "Player Name";
+        public  const   string              bingoSyncEntry_color        = "Player Color";
+        public  const   string              bingoSyncEntry_autoconnect  = "Auto-Connect";
+        public  const   string              bingoSyncEntry_key          = "Menu Key";
+        // -----------------------------------
+
         public static Reptile.Characters    character;
         public static MoveStyle             moveStyle;
         public static int                   outfit;
@@ -71,6 +87,8 @@ namespace TrueBingo
         public static bool                  fastCutscene;
         public static bool                  repDisplay;
         public static bool                  skipMallVinyl;
+        public static bool                  autoconnect;
+        public static KeyCode               menukey;
 
         public static void InitConfigs()
         {
@@ -85,6 +103,9 @@ namespace TrueBingo
 
             config_world_path_full = GetFilePath(config_foldername, config_world_filename, config_filetype);
             config_world = new ConfigFile(config_world_path_full, true);
+
+            config_bingosync_path_full = GetFilePath(config_foldername, config_bingosync_filename, config_filetype);
+            config_bingosync = new ConfigFile(config_bingosync_path_full, true);
         }
 
         private static string GetFilePath(string foldername, string filename, string filetype)
@@ -126,6 +147,26 @@ namespace TrueBingo
             BindConfig(worldEntry,      worldEntry_fastcutscene,true);
             BindConfig(worldEntry,      worldEntry_repdisplay,  true);
             BindConfig(worldEntry,      worldEntry_mallvinyl,   true);
+
+            bingoSyncEntry = new ConfigEntry(config_bingosync, config_selection_bingosync);
+            BindConfig(bingoSyncEntry, bingoSyncEntry_roomID,   "",
+                "Room ID (Numbers / Letters after /room/)"
+            );
+            BindConfig(bingoSyncEntry, bingoSyncEntry_password, "",
+                "Room Password"
+            );
+            BindConfig(bingoSyncEntry, bingoSyncEntry_name,     "",
+                "Player Name in Room"
+            );
+            BindConfig(bingoSyncEntry, bingoSyncEntry_color,    BingoSyncHandler.PlayerColors.Red,
+                "Player Color on Board"
+            );
+            BindConfig(bingoSyncEntry, bingoSyncEntry_autoconnect, true,
+                "Auto-Connect if Config Found"
+            );
+            BindConfig(bingoSyncEntry, bingoSyncEntry_key,      KeyCode.F1,
+                "Key to Open Menu"
+            );
         }
 
         private struct ConfigEntry
@@ -155,6 +196,7 @@ namespace TrueBingo
         {
             config_char .Reload();
             config_world.Reload();
+            config_bingosync.Reload();
 
             UpdateConfigAll();
         }
@@ -188,12 +230,23 @@ namespace TrueBingo
             worldEntry.UpdateConfig(worldEntry_fastcutscene,ref fastCutscene);
             worldEntry.UpdateConfig(worldEntry_repdisplay,  ref repDisplay);
             worldEntry.UpdateConfig(worldEntry_mallvinyl,   ref skipMallVinyl);
+
+            bingoSyncEntry.UpdateConfig(bingoSyncEntry_autoconnect, ref autoconnect);
+            bingoSyncEntry.UpdateConfig(bingoSyncEntry_key,         ref menukey);
         }
 
         private static void UpdateConfig<T>(this ConfigEntry configEntry, string entry, ref T option)
         {
             if (configEntry.TryGetEntry(entry, out T entry_value))
                 option = entry_value;
+        }
+
+        public static void SetConfigValue<T>(this ConfigFile configEntry, string selection, string key, T value)
+        {
+            if (configEntry.TryGetEntry(selection, key, out ConfigEntry<T> entryOut))
+                entryOut.Value = value;
+
+            configEntry.Save();
         }
 
         private static bool TryGetEntry<T>(this ConfigEntry configEntry, string key, out T entryValue)
