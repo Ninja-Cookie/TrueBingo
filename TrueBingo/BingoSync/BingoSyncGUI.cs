@@ -42,6 +42,8 @@ namespace TrueBingo.BingoSync
             UpdateBingoSyncConfig(BingoConfig.bingoSyncEntry_name,      ref PlayerName);
             UpdateBingoSyncConfig(BingoConfig.bingoSyncEntry_color,     ref PlayerColor);
 
+            Console.WriteLine(BingoConfig.autoconnect);
+
             if (BingoConfig.autoconnect && RoomID != string.Empty && PlayerName != string.Empty)
                 BingoSyncHandler.ConnectToRoom(RoomID, Password, PlayerName, PlayerColor);
         }

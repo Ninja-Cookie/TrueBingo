@@ -289,43 +289,78 @@ namespace TrueBingo.BingoSync
             return cookieContainier;
         }
 
-        public static async Task SendNotification(string response)
+        public static void SendNotification(string response)
         {
-            await Task.Run(() =>
+            if (BingoSyncSocket.GetJsonValue(response, "type") == "goal" && BingoSyncSocket.GetJsonValue(response, "square", "colors") != "blank")
             {
-                if (BingoSyncSocket.GetJsonValue(response, "type") == "goal" && BingoSyncSocket.GetJsonValue(response, "square", "colors") != "blank")
+                string player       = BingoSyncSocket.GetJsonValue(response, "player", "name");
+                string collection   = BingoSyncSocket.GetJsonValue(response, "square", "name");
+
+                string itemToSend = collection;
+
+                string stage = StageToName.Values.ToArray().FirstOrDefault(x => collection.Trim().StartsWith(x) || collection.Trim().EndsWith($"({x})") || (collection.ToLower().Contains(" rep ") && collection.Contains(x)));
+
+                if (collection.Contains(" - "))
+                    itemToSend = Regex.Match(collection, @" - (.+?) - ").Value.Replace(" - ", "").Trim();
+                else if (Regex.Match(collection, @"\((.+?)\)").Success)
+                    itemToSend = collection.Substring(0, collection.IndexOf('(') - 1).Trim();
+                else if (collection.ToLower().Contains(" rep "))
+                    itemToSend = collection.Substring(collection.ToLower().IndexOf("rep "));
+
+                if (player != string.Empty && itemToSend != string.Empty && player.ToLower().Replace(" ", "").Trim() != roomInfo.PlayerName.ToLower().Replace(" ", "").Trim())
                 {
-                    string player       = BingoSyncSocket.GetJsonValue(response, "player", "name");
-                    string collection   = BingoSyncSocket.GetJsonValue(response, "square", "name");
+                    string notification = $"{player}: \"{itemToSend}\"";
 
-                    string itemToSend = collection;
+                    if (stage != null && stage != string.Empty)
+                        notification = $"{notification} ({stage})";
 
-                    string stage = StageToName.Values.ToArray().FirstOrDefault(x => collection.Trim().StartsWith(x) || collection.Trim().EndsWith($"({x})") || (collection.ToLower().Contains(" rep ") && collection.Contains(x)));
-
-                    if (collection.Contains(" - "))
-                        itemToSend = Regex.Match(collection, @" - (.+?) - ").Value.Replace(" - ", "").Trim();
-                    else if (Regex.Match(collection, @"\((.+?)\)").Success)
-                        itemToSend = collection.Substring(0, collection.IndexOf('(') - 1).Trim();
-                    else if (collection.ToLower().Contains(" rep "))
-                        itemToSend = collection.Substring(collection.ToLower().IndexOf("rep "));
-
-                    if (player != string.Empty && player.ToLower().Replace(" ", "").Trim() != roomInfo.PlayerName.ToLower().Replace(" ", "").Trim())
-                    {
-                        string notification = $"{player}: \"{itemToSend}\"";
-
-                        if (stage != null && stage != string.Empty)
-                            notification = $"{notification} ({stage})";
-
-                        SendPhoneNotification(notification);
-                        SendDebugMessage(notification);
-                    }
+                    SendDebugMessage(notification);
+                    WaitThenSendNotification(notification);
                 }
-            });
+            }
         }
 
-        private static void SendPhoneNotification(string notification)
+        private static AppEmail EmailApp => WorldHandler.instance?.GetCurrentPlayer()?.GetValue<Phone>("phone")?.GetAppInstance<AppEmail>();
+
+        private static async void WaitThenSendNotification(string notification)
         {
-            WorldHandler.instance?.GetCurrentPlayer()?.GetValue<Phone>("phone")?.GetAppInstance<AppEmail>().PushNotification(notification, null);
+            BaseModule  baseModule  = Core.Instance?.BaseModule;
+            AppEmail    emailApp    = null;
+
+            if (baseModule == null)
+                return;
+
+            if (baseModule.IsLoading)
+            {
+                emailApp = await GetEmailApp(Time.time + (float)TimeSpan.FromSeconds(10).TotalSeconds);
+
+                if (emailApp != null)
+                    emailApp.PushNotification(notification, null);
+                else
+                    Console.WriteLine("Stopped Await");
+            }
+            else
+            {
+                EmailApp?.PushNotification(notification, null);
+            }
+        }
+
+        private static async Task<AppEmail> GetEmailApp(float endAfter)
+        {
+            AppEmail appEmail = null;
+
+            while (appEmail == null)
+            {
+                if (Time.time > endAfter)
+                    break;
+
+                appEmail = EmailApp;
+
+                if (appEmail == null)
+                    await Task.Yield();
+            }
+
+            return appEmail;
         }
 
         private static async Task<string> GetBoard(string room)

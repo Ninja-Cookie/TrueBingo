@@ -94,6 +94,7 @@ namespace TrueBingo
         {
             CreateConfig();
             FillConfigs();
+            ReloadConfigs();
         }
 
         private static void CreateConfig()

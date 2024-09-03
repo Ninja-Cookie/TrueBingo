@@ -75,7 +75,7 @@ namespace TrueBingo.BingoSync
                     string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
 
                     if (message != null && message != string.Empty)
-                        await BingoSyncHandler.SendNotification(message);
+                        BingoSyncHandler.SendNotification(message);
                 }
             }
 
