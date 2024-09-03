@@ -70,7 +70,7 @@ namespace TrueBingo.BingoSync
                     await CloseSocket();
                     Console.WriteLine("Socket was Closed.");
                 }
-                else if (result != null)
+                else if (result != null && BingoConfig.phonenotification)
                 {
                     string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
 

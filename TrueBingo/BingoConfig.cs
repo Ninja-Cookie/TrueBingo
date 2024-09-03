@@ -68,6 +68,7 @@ namespace TrueBingo
         public  const   string              bingoSyncEntry_name         = "Player Name";
         public  const   string              bingoSyncEntry_color        = "Player Color";
         public  const   string              bingoSyncEntry_autoconnect  = "Auto-Connect";
+        public  const   string              bingoSyncEntry_phonenoti    = "Show Phone Notifications";
         public  const   string              bingoSyncEntry_key          = "Menu Key";
         // -----------------------------------
 
@@ -88,6 +89,7 @@ namespace TrueBingo
         public static bool                  repDisplay;
         public static bool                  skipMallVinyl;
         public static bool                  autoconnect;
+        public static bool                  phonenotification;
         public static KeyCode               menukey;
 
         public static void InitConfigs()
@@ -165,6 +167,9 @@ namespace TrueBingo
             BindConfig(bingoSyncEntry, bingoSyncEntry_autoconnect, true,
                 "Auto-Connect if Config Found"
             );
+            BindConfig(bingoSyncEntry, bingoSyncEntry_key, true,
+                "Show Phone notifications when someone gets something on the board"
+            );
             BindConfig(bingoSyncEntry, bingoSyncEntry_key,      KeyCode.F1,
                 "Key to Open Menu"
             );
@@ -232,6 +237,7 @@ namespace TrueBingo
             worldEntry.UpdateConfig(worldEntry_mallvinyl,   ref skipMallVinyl);
 
             bingoSyncEntry.UpdateConfig(bingoSyncEntry_autoconnect, ref autoconnect);
+            bingoSyncEntry.UpdateConfig(bingoSyncEntry_phonenoti,   ref phonenotification);
             bingoSyncEntry.UpdateConfig(bingoSyncEntry_key,         ref menukey);
         }
 
