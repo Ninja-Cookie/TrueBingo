@@ -190,7 +190,6 @@ namespace TrueBingo
         public static void HandleConfig()
         {
             InitConfigs();
-            ReloadConfigs();
         }
 
         private static void ReloadConfigs()
