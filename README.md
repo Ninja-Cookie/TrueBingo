@@ -7,6 +7,23 @@ When creating a "New Game", by default, this will place you in "Hideout" with ev
 
 Config files to edit the character, style, and outfit you start as, as well as World settings to disable or enable specific things, such as removing BMX Doors, can be found in the `BepInEx > Config > TrueBingo` folder. Editing these can be done without restarting the game, but does require some type of update to the Stage or file, such as entering a new Stage or loading / creating the file again.
 
+## Now with BingoSync Support!
+A `BingoSync.cfg` file can now be found within the `BepInEx > Config > TrueBingo` folder after launching the game.
+By connecting to a room, this allows the game to automatically mark stuff on the board for you, based on the custom Json logic provided on the [GitHub](https://github.com/Ninja-Cookie/TrueBingo), with more info on how to use it.
+
+By default, using `F1` will bring up an in-game menu to connect to a room with.
+
+## **[Latest Version of the Json](https://pastebin.com/raw/fABW8hcK)**
+To use this, when creating a room on [BingoSync](https://bingosync.com/), set the game to `Custom (Advanced)` at the bottom of the Game list, and set the Mode to `Lockout` (Which is currently the only supported mode).
+
+From here, connect in-game using the menu (or config file with auto-connect), providing;
+- The Room ID (Example Room ID: `7IkuxH2ATh6PKSZqpfE0Af` - shown on the URL after /room/),
+- Room Password
+- Your Player Name
+- Selecting the color you will shown on the board as (which can still be changed after connecting)
+
+For more updated info on BRC Bingo, you can join the [Discord](https://discord.gg/EWCfbJDrh4), however it is not required to use this feature.
+
 ## The full list of features include:
 - Start a "New Game" and go anywhere from the start.
 - Set your "New Game" starting Character, Style, and Outfit.
@@ -20,4 +37,5 @@ Config files to edit the character, style, and outfit you start as, as well as W
 - Toggle to Enable Teleport Robo-Posts.
 - Toggle to Enable Cutscene Skip.
 - Toggle to Enable Fast Cutscenes.
-- Toggle to Always Show Rep.
+- Toggle to Always Show Accurate Rep.
+- BingoSync Support.
