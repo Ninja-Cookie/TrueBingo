@@ -68,7 +68,7 @@ namespace TrueBingo
         public  const   string              bingoSyncEntry_name         = "Player Name";
         public  const   string              bingoSyncEntry_color        = "Player Color";
         public  const   string              bingoSyncEntry_autoconnect  = "Auto-Connect";
-        public  const   string              bingoSyncEntry_phonenoti    = "Show Phone Notifications";
+        public  const   string              bingoSyncEntry_phonenoti    = "Notifications";
         public  const   string              bingoSyncEntry_key          = "Menu Key";
         // -----------------------------------
 
