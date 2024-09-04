@@ -167,7 +167,7 @@ namespace TrueBingo
             BindConfig(bingoSyncEntry, bingoSyncEntry_autoconnect, true,
                 "Auto-Connect if Config Found"
             );
-            BindConfig(bingoSyncEntry, bingoSyncEntry_key, true,
+            BindConfig(bingoSyncEntry, bingoSyncEntry_phonenoti, true,
                 "Show Phone notifications when someone gets something on the board"
             );
             BindConfig(bingoSyncEntry, bingoSyncEntry_key,      KeyCode.F1,
