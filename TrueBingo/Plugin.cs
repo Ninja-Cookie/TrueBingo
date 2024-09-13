@@ -1,7 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using Reptile;
-using TrueBingo.BingoSync;
+using TrueBingo.BingoSyncManager;
 using UnityEngine;
 
 namespace TrueBingo
@@ -11,7 +11,7 @@ namespace TrueBingo
     {
         public const string pluginGuid      = "ninjacookie.brc.truebingo";
         public const string pluginName      = "TrueBingo";
-        public const string pluginVersion   = "1.1.4";
+        public const string pluginVersion   = "1.2.0";
 
         public static GameObject BingoSyncGUI;
 

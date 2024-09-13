@@ -1,8 +1,8 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using BingoSyncAPI;
 using Reptile;
 using System.IO;
-using TrueBingo.BingoSync;
 using UnityEngine;
 using static TrueBingo.BingoConfigTypes;
 
@@ -161,7 +161,7 @@ namespace TrueBingo
             BindConfig(bingoSyncEntry, bingoSyncEntry_name,     "",
                 "Player Name in Room"
             );
-            BindConfig(bingoSyncEntry, bingoSyncEntry_color,    BingoSyncHandler.PlayerColors.Red,
+            BindConfig(bingoSyncEntry, bingoSyncEntry_color,    BingoSyncTypes.PlayerColors.Red,
                 "Player Color on Board"
             );
             BindConfig(bingoSyncEntry, bingoSyncEntry_autoconnect, true,

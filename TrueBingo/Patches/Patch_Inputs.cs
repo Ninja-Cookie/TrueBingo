@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using Reptile;
-using TrueBingo.BingoSync;
+using TrueBingo.BingoSyncManager;
 
 namespace TrueBingo.Patches
 {

@@ -1,8 +1,9 @@
-﻿using HarmonyLib;
+﻿using BingoSyncAPI;
+using HarmonyLib;
 using Reptile;
 using Reptile.Phone;
 using UnityEngine;
-using TrueBingo.BingoSync;
+using TrueBingo.BingoSyncManager;
 
 namespace TrueBingo.Patches
 {
@@ -15,7 +16,7 @@ namespace TrueBingo.Patches
         {
             public static void Postfix(AUnlockable unlockable, Pickup.PickUpType pickupType)
             {
-                if (!BingoSyncHandler.ConnectedToRoom)
+                if (TrueBingoSync.bingoSync.Status != BingoSync.ConnectionStatus.Connected)
                     return;
 
                 string itemToSend = string.Empty;
@@ -29,7 +30,7 @@ namespace TrueBingo.Patches
                 }
 
                 if (itemToSend != string.Empty)
-                    MarkItem(itemToSend, BingoSyncHandler.ObjectiveType.ItemPickup, pickupType);
+                    MarkObjective(itemToSend, TrueBingoSync.ObjectiveType.ItemPickup, pickupType);
             }
         }
 
@@ -38,10 +39,10 @@ namespace TrueBingo.Patches
         {
             public static void Postfix(Characters character)
             {
-                if (!BingoSyncHandler.ConnectedToRoom)
+                if (TrueBingoSync.bingoSync.Status != BingoSync.ConnectionStatus.Connected)
                     return;
 
-                MarkItem(English.GetCharacterName(character).ToLower().FirstCharToUpper(), BingoSyncHandler.ObjectiveType.CharacterUnlock);
+                MarkObjective(English.GetCharacterName(character).ToLower().FirstCharToUpper(), TrueBingoSync.ObjectiveType.CharacterUnlock);
             }
         }
 
@@ -50,10 +51,10 @@ namespace TrueBingo.Patches
         {
             public static void Postfix()
             {
-                if (!BingoSyncHandler.ConnectedToRoom)
+                if (TrueBingoSync.bingoSync.Status != BingoSync.ConnectionStatus.Connected)
                     return;
 
-                MarkItem("Save the Taxi Driver", BingoSyncHandler.ObjectiveType.TaxiDriver);
+                MarkObjective("Save the Taxi Driver", TrueBingoSync.ObjectiveType.TaxiDriver);
             }
         }
 
@@ -62,7 +63,7 @@ namespace TrueBingo.Patches
         {
             public static void Postfix(int ___reputation, Stage ___stageID)
             {
-                if (!BingoSyncHandler.ConnectedToRoom)
+                if (TrueBingoSync.bingoSync.Status != BingoSync.ConnectionStatus.Connected)
                     return;
 
                 int reputationToCheck = 999;
@@ -93,16 +94,13 @@ namespace TrueBingo.Patches
                 }
 
                 if (___reputation >= reputationToCheck)
-                    MarkItem(English.GetStageName(___stageID), BingoSyncHandler.ObjectiveType.Rep);
+                    MarkObjective(English.GetStageName(___stageID), TrueBingoSync.ObjectiveType.Rep);
             }
         }
 
-        private static async void MarkItem(string itemToSend, BingoSyncHandler.ObjectiveType objectiveType, Pickup.PickUpType? pickupType = null)
+        private static void MarkObjective(string itemToSend, TrueBingoSync.ObjectiveType objectiveType, Pickup.PickUpType? pickupType = null)
         {
-            if (!BingoSyncHandler.ConnectedToRoom)
-                return;
-
-            await BingoSyncHandler.MarkSquare(itemToSend, objectiveType, pickupType);
+            TrueBingoSync.MarkObjective(itemToSend, objectiveType, pickupType);
         }
     }
 }

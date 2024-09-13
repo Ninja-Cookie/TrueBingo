@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TrueBingo.BingoSync
+namespace TrueBingo.BingoSyncManager
 {
     internal static class BingoSyncGUIConfig
     {
@@ -11,30 +11,59 @@ namespace TrueBingo.BingoSync
             if (stylesSetUp)
                 return;
 
-            Styles.Button = GUI.skin.button;
+            Styles.Button                       = new GUIStyle(GUI.skin.button);
             Styles.Button.normal.background     = Textures.Button_Background;
             Styles.Button.hover.background      = Textures.Button_Hover;
             Styles.Button.active.background     = Textures.Button_Click;
 
-            Styles.Label = GUI.skin.label;
+            Styles.Label                        = new GUIStyle(GUI.skin.label);
+            Styles.Label.alignment              = TextAnchor.MiddleCenter;
+            Styles.Label.wordWrap               = false;
+            Styles.Label.fontStyle              = FontStyle.Bold;
+
+            Styles.LabelCountdown               = new GUIStyle(GUI.skin.label);
+            Styles.LabelCountdown.fixedWidth    = Screen.width;
+            Styles.LabelCountdown.alignment     = TextAnchor.MiddleCenter;
+            Styles.LabelCountdown.wordWrap      = false;
+            Styles.LabelCountdown.fontStyle     = FontStyle.Bold;
+
+            Styles.Pause                        = new GUIStyle(GUI.skin.label);
+            Styles.Pause.fixedWidth             = Screen.width;
+            Styles.Pause.alignment              = TextAnchor.MiddleCenter;
+            Styles.Pause.wordWrap               = false;
+            Styles.Pause.fontStyle              = FontStyle.Bold;
+            Styles.Pause.fontSize               = Mathf.FloorToInt(Screen.width * 0.05f);
 
             stylesSetUp = true;
         }
 
         public static GUIStyle GetLabelStyle(bool field = false)
         {
-            Styles.Label.fixedWidth     = field ? BingoSyncGUI.labelSpace : BingoSyncGUI.elementW;
-            Styles.Label.alignment      = TextAnchor.MiddleCenter;
-            Styles.Label.wordWrap       = false;
-            Styles.Label.fontStyle      = FontStyle.Bold;
-
+            Styles.Label.fixedWidth = field ? BingoSyncGUI.labelSpace : BingoSyncGUI.elementW;
             return Styles.Label;
+        }
+
+        public static GUIStyle GetCountdownLabel()
+        {
+            int scale = 1;
+
+            if (int.TryParse(BingoSyncGUI.countdownMessage, out int newScale))
+                scale = newScale;
+
+            int screenFont  = Mathf.FloorToInt(Screen.width * 0.08f);
+            int scaleFrom   = (screenFont / 4);
+
+            Styles.LabelCountdown.fontSize = screenFont + ((5 * scaleFrom) - Mathf.FloorToInt(scale * scaleFrom));
+
+            return Styles.LabelCountdown;
         }
 
         public static class Styles
         {
             public static GUIStyle Button;
             public static GUIStyle Label;
+            public static GUIStyle LabelCountdown;
+            public static GUIStyle Pause;
         }
 
         public static class Textures

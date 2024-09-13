@@ -1,15 +1,20 @@
 ﻿using BepInEx.Configuration;
+using BingoSyncAPI;
 using Reptile;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static TrueBingo.BingoSync.BingoSyncGUIConfig;
+using static TrueBingo.BingoSyncManager.BingoSyncGUIConfig;
 
-namespace TrueBingo.BingoSync
+namespace TrueBingo.BingoSyncManager
 {
     internal class BingoSyncGUI : MonoBehaviour
     {
         public static bool GUIOpen = false;
+
+        public static bool Countdown = false;
+        public static bool Pause = false;
+        public static string countdownMessage = "";
 
         private Dictionary<string, string> textFields = new Dictionary<string, string>();
 
@@ -42,10 +47,8 @@ namespace TrueBingo.BingoSync
             UpdateBingoSyncConfig(BingoConfig.bingoSyncEntry_name,      ref PlayerName);
             UpdateBingoSyncConfig(BingoConfig.bingoSyncEntry_color,     ref PlayerColor);
 
-            Console.WriteLine(BingoConfig.autoconnect);
-
             if (BingoConfig.autoconnect && RoomID != string.Empty && PlayerName != string.Empty)
-                BingoSyncHandler.ConnectToRoom(RoomID, Password, PlayerName, PlayerColor);
+                JoinRoom();
         }
 
         private void UpdateBingoSyncConfig<T>(string key, ref T reference)
@@ -54,52 +57,84 @@ namespace TrueBingo.BingoSync
                 reference = configEntry.Value;
         }
 
+        private void SetBingoSyncConfigValue<T>(string key, T value)
+        {
+            if (BingoConfig.config_bingosync.TryGetEntry(BingoConfig.config_selection_bingosync, key, out ConfigEntry<T> configEntry))
+                configEntry.Value = value;
+        }
+
         private void OnGUI()
         {
+            SetupStyles();
+
             if (GUIOpen)
             {
-                SetupStyles();
                 GUIWindow(0, windowName, new Color(0, 0, 0, 1f));
+            }
+
+            if (Pause)
+            {
+                GUI.contentColor = Color.black;
+                GUI.Label(new Rect(3, 3, Screen.width, Screen.height), "Paused", Styles.Pause);
+
+                GUI.contentColor = Color.red;
+                GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Paused", Styles.Pause);
+            }
+
+            if (Countdown)
+            {
+                Pause = false;
+
+                GUIStyle countdown = GetCountdownLabel();
+
+                GUI.contentColor = Color.black;
+                GUI.Label(new Rect(3, 3, Screen.width, Screen.height), countdownMessage, countdown);
+
+                GUI.contentColor = Color.white;
+                GUI.Label(new Rect(0, 0, Screen.width, Screen.height), countdownMessage, countdown);
             }
         }
 
-        private readonly int possibleColors = Enum.GetValues(typeof(BingoSyncHandler.PlayerColors)).Length;
+        private readonly int possibleColors = Enum.GetValues(typeof(BingoSyncTypes.PlayerColors)).Length;
 
-        private Color PlayerColorToColor(BingoSyncHandler.PlayerColors playerColor)
+        private Color PlayerColorToColor(BingoSyncTypes.PlayerColors playerColor)
         {
             switch (playerColor)
             {
-                case BingoSyncHandler.PlayerColors.Orange:  return Colors.Orange;
-                case BingoSyncHandler.PlayerColors.Red:     return Colors.Red;
-                case BingoSyncHandler.PlayerColors.Blue:    return Colors.Blue;
-                case BingoSyncHandler.PlayerColors.Green:   return Colors.Green;
-                case BingoSyncHandler.PlayerColors.Purple:  return Colors.Purple;
-                case BingoSyncHandler.PlayerColors.Navy:    return Colors.Navy;
-                case BingoSyncHandler.PlayerColors.Teal:    return Colors.Teal;
-                case BingoSyncHandler.PlayerColors.Brown:   return Colors.Brown;
-                case BingoSyncHandler.PlayerColors.Pink:    return Colors.Pink;
-                case BingoSyncHandler.PlayerColors.Yellow:  return Colors.Yellow;
+                case BingoSyncTypes.PlayerColors.Orange:  return Colors.Orange;
+                case BingoSyncTypes.PlayerColors.Red:     return Colors.Red;
+                case BingoSyncTypes.PlayerColors.Blue:    return Colors.Blue;
+                case BingoSyncTypes.PlayerColors.Green:   return Colors.Green;
+                case BingoSyncTypes.PlayerColors.Purple:  return Colors.Purple;
+                case BingoSyncTypes.PlayerColors.Navy:    return Colors.Navy;
+                case BingoSyncTypes.PlayerColors.Teal:    return Colors.Teal;
+                case BingoSyncTypes.PlayerColors.Brown:   return Colors.Brown;
+                case BingoSyncTypes.PlayerColors.Pink:    return Colors.Pink;
+                case BingoSyncTypes.PlayerColors.Yellow:  return Colors.Yellow;
             }
             return Color.black;
         }
 
-        private BingoSyncHandler.PlayerColors PlayerColor = BingoSyncHandler.PlayerColors.Red;
+        private BingoSyncTypes.PlayerColors PlayerColor = BingoSyncTypes.PlayerColors.Red;
         private string RoomID       = string.Empty;
         private string Password     = string.Empty;
         private string PlayerName   = string.Empty;
 
-        private string ConnectionColor      => BingoSyncHandler.ConnectedToRoom ? "lime" : BingoSyncHandler.ConnectingToRoom ? "orange" : "red";
-        private string ConnectColor         => BingoSyncHandler.ConnectedToRoom ? "grey" : "white";
-        private string DisconnectionColor   => BingoSyncHandler.ConnectedToRoom && !BingoSyncHandler.DisconnectingFromRoom ? "red" : "grey";
+        private string ConnectionColor      => TrueBingoSync.bingoSync.Status == BingoSync.ConnectionStatus.Connected       ? "lime"    : TrueBingoSync.bingoSync.Status == BingoSync.ConnectionStatus.Connecting ? "orange" : "red";
+        private string ConnectColor         => TrueBingoSync.bingoSync.Status == BingoSync.ConnectionStatus.Disconnected    ? "white"   : "grey";
+        private string DisconnectionColor   => TrueBingoSync.bingoSync.Status == BingoSync.ConnectionStatus.Connected       ? "red"     : "grey";
 
         private void HandleGUI(int windowID)
         {
             index = 0;
 
-            if (GUIButton($"Color: {PlayerColor.ToString()}", PlayerColorToColor(PlayerColor)) && !BingoSyncHandler.SettingColor && !BingoSyncHandler.ConnectingToRoom)
+            if (GUIButton($"Color: {PlayerColor.ToString()}", PlayerColorToColor(PlayerColor)) && !TrueBingoSync.IsUpdatingColor && TrueBingoSync.bingoSync.Status != BingoSync.ConnectionStatus.Connecting && TrueBingoSync.bingoSync.Status != BingoSync.ConnectionStatus.Disconnecting)
             {
-                PlayerColor = (int)PlayerColor >= possibleColors - 1 ? BingoSyncHandler.PlayerColors.Orange : (BingoSyncHandler.PlayerColors)((int)PlayerColor + 1);
-                BingoSyncHandler.UpdatePlayerColor(PlayerColor);
+                PlayerColor = (int)PlayerColor >= possibleColors - 1 ? BingoSyncTypes.PlayerColors.Orange : (BingoSyncTypes.PlayerColors)((int)PlayerColor + 1);
+                TrueBingoSync.SetPlayerColor(PlayerColor);
+
+                SetBingoSyncConfigValue(BingoConfig.bingoSyncEntry_color, PlayerColor);
+                BingoConfig.config_bingosync.Save();
             }
 
             RoomID      = GUITextField("RoomID",    RoomID,     Color.white, Color.white, "Room ID:",       true);
@@ -108,11 +143,14 @@ namespace TrueBingo.BingoSync
 
             GUILabel(errorMessage, Color.red);
 
-            if (GUIButton($"<color={ConnectColor}>Connect</color> <color={ConnectionColor}>({BingoSyncHandler.ConnectionStatus})</color>", Color.gray) && !BingoSyncHandler.ConnectedToRoom && !BingoSyncHandler.ConnectingToRoom)
-                BingoSyncHandler.ConnectToRoom(RoomID, Password, PlayerName, PlayerColor);
+            if (GUIButton($"<color={ConnectColor}>Connect</color> <color={ConnectionColor}>({TrueBingoSync.bingoSync.Status.ToString()})</color>", Color.gray) && TrueBingoSync.bingoSync.Status == BingoSync.ConnectionStatus.Disconnected)
+            {
+                errorMessage = "";
+                JoinRoom();
+            }
 
-            if (GUIButton($"<color={DisconnectionColor}>Disconnect</color>", Color.gray) && BingoSyncHandler.ConnectedToRoom)
-                BingoSyncHandler.Disconnect();
+            if (GUIButton($"<color={DisconnectionColor}>Disconnect</color>", Color.gray) && TrueBingoSync.bingoSync.Status == BingoSync.ConnectionStatus.Connected)
+                TrueBingoSync.Disconnect();
         }
 
         private Rect GUIWindow(int ID, string name, Color color)
@@ -130,6 +168,11 @@ namespace TrueBingo.BingoSync
 
             GUI.contentColor = color;
             GUI.Label(updateIndex ? elementRect : customRect, text, GetLabelStyle(!updateIndex));
+        }
+
+        private void JoinRoom()
+        {
+            TrueBingoSync.JoinRoom(new BingoSyncTypes.RoomInfo(RoomID, Password, PlayerName, PlayerColor, false));
         }
 
         private bool GUIButton(string text, Color color)
