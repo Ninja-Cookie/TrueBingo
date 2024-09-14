@@ -24,6 +24,13 @@ From here, connect in-game using the menu (or config file with auto-connect), pr
 
 For more updated info on BRC Bingo, you can join the [Discord](https://discord.gg/EWCfbJDrh4), however it is not required to use this feature.
 
+### BingoSync Chat Commands:
+- `!start` Starts a countdown from 5 ending at "Go!".
+- `!pause` Pauses all connected players with a message on-screen.
+- `!resume` Resumes being paused with a countdown.
+- `!ping` Gets a response from all connected players about how fast they can respond.
+- `!help` If the player typing this matches the name of the TrueBingo connection, it will print these out in the chat.
+
 ## The full list of features include:
 - Start a "New Game" and go anywhere from the start.
 - Set your "New Game" starting Character, Style, and Outfit.
