@@ -8,6 +8,8 @@ When creating a "New Game", by default, this will place you in "Hideout" with ev
 Config files to edit the character, style, and outfit you start as, as well as World settings to disable or enable specific things, such as removing BMX Doors, can be found in the `BepInEx > Config > TrueBingo` folder. Editing these can be done without restarting the game, but does require some type of update to the Stage or file, such as entering a new Stage or loading / creating the file again.
 
 ## Now with BingoSync Support!
+Now uses my new API interactor [BingoSyncSharp](https://github.com/Ninja-Cookie/BingoSyncSharp)!
+
 A `BingoSync.cfg` file can now be found within the `BepInEx > Config > TrueBingo` folder after launching the game.
 By connecting to a room, this allows the game to automatically mark stuff on the board for you, based on the custom Json logic provided on the [GitHub](https://github.com/Ninja-Cookie/TrueBingo), with more info on how to use it.
 
