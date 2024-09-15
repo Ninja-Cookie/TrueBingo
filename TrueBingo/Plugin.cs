@@ -11,7 +11,7 @@ namespace TrueBingo
     {
         public const string pluginGuid      = "ninjacookie.brc.truebingo";
         public const string pluginName      = "TrueBingo";
-        public const string pluginVersion   = "1.2.0";
+        public const string pluginVersion   = "1.2.1";
 
         public static GameObject BingoSyncGUI;
 
