@@ -242,7 +242,7 @@ namespace TrueBingo.BingoSyncManager
                     itemToSend = itemToSend.ToLower().Trim();
 
                     if (itemToSend.Contains(' '))
-                        itemToSend = itemToSend.Split(' ')[0];
+                        itemToSend = itemToSend.Split(' ')[1];
 
                     itemSlot = itemSlots.FirstOrDefault(x => x.Info.ToLower().Contains(" rep ") && x.Info.ToLower().Contains(itemToSend));
                 break;
