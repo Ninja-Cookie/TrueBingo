@@ -4,6 +4,8 @@ using Reptile;
 using Reptile.Phone;
 using UnityEngine;
 using TrueBingo.BingoSyncManager;
+using System;
+using System.Collections.Generic;
 
 namespace TrueBingo.Patches
 {
@@ -26,7 +28,10 @@ namespace TrueBingo.Patches
                     case Pickup.PickUpType.MUSIC_UNLOCKABLE:            itemToSend = (unlockable as MusicTrack).Title;                          break;
                     case Pickup.PickUpType.GRAFFITI_UNLOCKABLE:         itemToSend = (unlockable as GraffitiAppEntry).Title;                    break;
                     case Pickup.PickUpType.MOVESTYLE_SKIN_UNLOCKABLE:   itemToSend = English.GetSkinText((unlockable as MoveStyleSkin).Title);  break;
-                    case Pickup.PickUpType.OUTFIT_UNLOCKABLE:           itemToSend = $"{English.GetCharacterName((unlockable as OutfitUnlockable).character).ToLower().FirstCharToUpper()}: {English.GetSkinText((unlockable as OutfitUnlockable).outfitName)}"; break;
+                    case Pickup.PickUpType.OUTFIT_UNLOCKABLE:
+                        if (HardCharNames.TryGetValue((unlockable as OutfitUnlockable).character, out string charname))
+                            itemToSend = $"{charname.ToLower().FirstCharToUpper()}: {English.GetSkinText((unlockable as OutfitUnlockable).outfitName)}";
+                    break;
                 }
 
                 if (itemToSend != string.Empty)
@@ -102,5 +107,35 @@ namespace TrueBingo.Patches
         {
             TrueBingoSync.MarkObjective(itemToSend, objectiveType, pickupType);
         }
+
+        public static Dictionary<Characters, string> HardCharNames = new Dictionary<Characters, string>()
+        {
+            { Characters.girl1,             "VINYL"         },
+            { Characters.frank,             "FRANK"         },
+            { Characters.ringdude,          "COIL"          },
+            { Characters.metalHead,         "RED"           },
+            { Characters.blockGuy,          "TRYCE"         },
+            { Characters.spaceGirl,         "BEL"           },
+            { Characters.angel,             "RAVE"          },
+            { Characters.eightBall,         "DOT EXE"       },
+            { Characters.dummy,             "SOLACE"        },
+            { Characters.dj,                "DJ CYBER"      },
+            { Characters.medusa,            "ECLIPSE"       },
+            { Characters.boarder,           "DEVIL THEORY"  },
+            { Characters.headMan,           "FAUX"          },
+            { Characters.prince,            "FLESH PRINCE"  },
+            { Characters.jetpackBossPlayer, "RIETVELD"      },
+            { Characters.legendFace,        "FELIX"         },
+            { Characters.oldheadPlayer,     "OLDHEAD"       },
+            { Characters.robot,             "BASE"          },
+            { Characters.skate,             "JAY"           },
+            { Characters.wideKid,           "MESH"          },
+            { Characters.futureGirl,        "FUTURISM"      },
+            { Characters.pufferGirl,        "RISE"          },
+            { Characters.bunGirl,           "SHINE"         },
+            { Characters.headManNoJetpack,  "FAUX"          },
+            { Characters.eightBallBoss,     "DOT EXE"       },
+            { Characters.legendMetalHead,   "RED FELIX"     }
+        };
     }
 }
