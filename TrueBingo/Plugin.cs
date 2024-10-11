@@ -11,7 +11,7 @@ namespace TrueBingo
     {
         public const string pluginGuid      = "ninjacookie.brc.truebingo";
         public const string pluginName      = "TrueBingo";
-        public const string pluginVersion   = "1.2.3";
+        public const string pluginVersion   = "1.2.4";
 
         public static GameObject BingoSyncGUI;
 
@@ -25,6 +25,7 @@ namespace TrueBingo
             StageManager.OnStageInitialized += BingoHandleStage.UpdateStage;
             Core.OnUpdate += BingoHandleStage.UpdateObjective;
             Core.OnUpdate += BingoHandleStage.UpdateWanted;
+            Core.OnAlwaysUpdate += TrueBingoSync.Update;
 
             BingoSyncGUI = new GameObject("BingoSyncGUI", typeof(BingoSyncGUI));
             DontDestroyOnLoad(BingoSyncGUI);

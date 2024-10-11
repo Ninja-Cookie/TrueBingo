@@ -18,6 +18,8 @@ namespace TrueBingo.BingoSyncManager
 
         public static bool IsUpdatingColor = false;
 
+        private static bool _paused = false;
+
         private static List<BingoSync.MessageReceived> receivers = new List<BingoSync.MessageReceived>();
 
         public enum ObjectiveType
@@ -75,6 +77,7 @@ namespace TrueBingo.BingoSyncManager
 
                         case "pause":
                             Core.Instance?.PauseCore(PauseType.Debug);
+                            _paused = true;
                             BingoSyncGUI.Pause = true;
                         break;
 
@@ -91,8 +94,17 @@ namespace TrueBingo.BingoSyncManager
             }
         }
 
+        public static void Update()
+        {
+            if (_paused && !Core.Instance.IsCorePaused)
+                Core.Instance.PauseCore(PauseType.Debug);
+        }
+
         private static async void StartCountdown(bool resume = false)
         {
+            if (_paused && !resume)
+                return;
+
             if (resume)
                 while (BingoSyncGUI.Countdown) await Task.Yield();
 
@@ -133,7 +145,10 @@ namespace TrueBingo.BingoSyncManager
                         BingoSyncGUI.countdownMessage = "GO!";
 
                         if (resume)
+                        {
+                            _paused = false;
                             Core.Instance?.UnPauseCore(PauseType.Debug);
+                        }
                     }
 
                     await Task.Delay(TimeSpan.FromSeconds(1));
