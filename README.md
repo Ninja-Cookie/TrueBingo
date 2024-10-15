@@ -15,7 +15,7 @@ By connecting to a room, this allows the game to automatically mark stuff on the
 
 By default, using `F1` will bring up an in-game menu to connect to a room with.
 
-## **[Latest Version of the Json]([https://pastebin.com/raw/LL41W5EJ)**
+## **[Latest Version of the Json](https://pastebin.com/raw/LL41W5EJ)**
 To use this, when creating a room on [BingoSync](https://bingosync.com/), set the game to `Custom (Advanced)` at the bottom of the Game list, and set the Mode to `Lockout` (Which is currently the only supported mode), then set the Variant to `SRL v5` and paste the JSON from the latest version in the Board section.
 
 From here, connect in-game using the menu (or config file with auto-connect), providing;
